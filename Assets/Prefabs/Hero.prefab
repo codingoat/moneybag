@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7284313859338345931}
   - component: {fileID: 2029639026850827425}
   - component: {fileID: 6654853224356329658}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3798724900471879839}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 4520207112430722403}
   - component: {fileID: 6872769753168614697}
   - component: {fileID: 3924041616801937191}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Capsule
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -234,7 +234,7 @@ GameObject:
   - component: {fileID: 1570879207837676888}
   - component: {fileID: 7703834670072554686}
   - component: {fileID: 2643553904084825981}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Hero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -385,4 +385,3 @@ MonoBehaviour:
   moveSpeed: 9
   rotationSpeed: 15
   groundCheckRadius: 0.35
-  moveAction: {fileID: 0}

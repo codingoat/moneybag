@@ -14,9 +14,9 @@ namespace Moneybag
         [SerializeField] private float moveSpeed = 9,
             rotationSpeed = 15,
             groundCheckRadius = .35f;
-        // [SerializeField] private InputActionAsset inputAsset;
-        [SerializeField] private InputActionReference moveAction;
 
+        public int Money { get; private set; }
+        
         private Rigidbody rg;
         private PlayerInput playerInput;
 
@@ -79,6 +79,8 @@ namespace Moneybag
 
 #endregion
 
+#region Input
+
         public void Smack(InputAction.CallbackContext ctx)
         {
             if (!ctx.performed) return;
@@ -91,6 +93,10 @@ namespace Moneybag
             inputDirection = ctx.ReadValue<Vector2>();
             Debug.Log(inputDirection);
         }
+
+#endregion
+
+        public void CollectBag(Bag bag) => Money += bag.Value;
     }
 }
 
