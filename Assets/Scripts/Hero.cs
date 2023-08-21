@@ -16,6 +16,7 @@ namespace Moneybag
             groundCheckRadius = .35f;
 
         public int Money { get; private set; }
+        public int Bags => Money / Params.bagValue;
         
         private Rigidbody rg;
         private PlayerInput playerInput;
@@ -91,7 +92,7 @@ namespace Moneybag
         public void Move(InputAction.CallbackContext ctx)
         {
             inputDirection = ctx.ReadValue<Vector2>();
-            Debug.Log(inputDirection);
+            // Debug.Log(inputDirection);
         }
 
 #endregion
