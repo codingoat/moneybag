@@ -8,33 +8,44 @@ using ZUtils;
 
 namespace Moneybag
 {
-    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(Rigidbody), typeof(Animator))]
     public class Hero : MonoBehaviour
     {
         [SerializeField] private float moveSpeed = 9,
             rotationSpeed = 15,
             groundCheckRadius = .35f;
 
-        public int Money { get; private set; }
-        public int Bags => Money / Params.bagValue;
+        [Serializable]
+        public class ActionCooldowns
+        {
+            public float smack = 1.5f, block = .8f;
+        }
+        [SerializeField] private ActionCooldowns actionCooldowns;
+
+        [SerializeField] private HeroDetector attackHitbox;
+
+        private float actionCooldownTimer;
+        private bool CanDoAction => actionCooldownTimer <= 0 && !KnockedBack;
+        public bool Blocking { get; private set; }
+
+        [SerializeField] private float knockbackLength, knockbackStrength;
+        private float knockbackProgress;
+        private Vector3 knockbackDirection;
+        private bool KnockedBack => knockbackProgress < 1;
         
         private Rigidbody rg;
-        private PlayerInput playerInput;
+        private Animator animator;
 
-        private readonly int ANIM_MOVE_SPEED = Animator.StringToHash("MoveSpeed");
+        private readonly int ANIM_MOVE_SPEED = Animator.StringToHash("MoveSpeed"),
+            ANIM_SMACK = Animator.StringToHash("Smack"),
+            ANIM_BLOCK = Animator.StringToHash("Block");
 
 #region Properties
 
         private Vector2 inputDirection = Vector2.zero;
 
-        public Vector3 MoveDirection
-        {
-            get
-            {
-                return Vector3.ClampMagnitude(new Vector3(inputDirection.x, 0, inputDirection.y), 1);
-            }
-        }
-        
+        public Vector3 MoveDirection => Vector3.ClampMagnitude(new Vector3(inputDirection.x, 0, inputDirection.y), 1);
+
         private bool IsGrounded
         {
             get
@@ -46,6 +57,8 @@ namespace Moneybag
             }
         }
 
+        public Vector3 Direction => transform.forward;
+
 #endregion
 
 #region Lifecycle
@@ -53,7 +66,7 @@ namespace Moneybag
         private void Awake()
         {
             rg = GetComponent<Rigidbody>();
-            playerInput = GetComponent<PlayerInput>();
+            animator = GetComponent<Animator>();
         }
 
         private void Update()
@@ -63,6 +76,10 @@ namespace Moneybag
             if (moveDirection.sqrMagnitude > 0.05f) // rotate hero smoothly
                 rg.rotation = Quaternion.Slerp(rg.rotation, Quaternion.LookRotation(moveDirection),
                     Time.deltaTime * rotationSpeed);
+            
+            // timers
+            actionCooldownTimer = Mathf.Max(0, actionCooldownTimer - Time.deltaTime);
+            if (KnockedBack) knockbackProgress = Mathf.Min(1, knockbackProgress + Time.deltaTime / knockbackLength);
         }
 
         // since the character is driven by a rigidbody,
@@ -70,7 +87,12 @@ namespace Moneybag
         private void FixedUpdate()
         {
             // movement
-            Vector3 velocity = MoveDirection * moveSpeed + rg.velocity.y * Vector3.up;
+            Vector3 velocity;
+
+            if (KnockedBack) velocity = Easing.OutQuad(1 - knockbackProgress) * knockbackStrength * knockbackDirection; 
+            else velocity = MoveDirection * moveSpeed;
+            
+            velocity += rg.velocity.y * Vector3.up; // apply gravity from rg
             
             // don't fly off ramps
             if (velocity.y > 0 && !IsGrounded) velocity.y = 0;
@@ -80,24 +102,111 @@ namespace Moneybag
 
 #endregion
 
-#region Input
+#region Money
 
-        public void Smack(InputAction.CallbackContext ctx)
+        public int Money { get; private set; }
+        public int Bags => Money / Params.bagValue;
+        
+        /// <returns>The amount of money actually taken.</returns>
+        public int TakeMoney(int desiredAmount)
         {
-            if (!ctx.performed) return;
-            
-            Debug.Log("SMACK");
+            int returnedAmount = Mathf.Min(desiredAmount, Money);
+            Money -= returnedAmount;
+            return returnedAmount;
         }
+        
+        public void CollectBag(Bag bag) => Money += bag.Value;
+
+#endregion
+
+#region Input
 
         public void Move(InputAction.CallbackContext ctx)
         {
             inputDirection = ctx.ReadValue<Vector2>();
-            // Debug.Log(inputDirection);
+            animator.SetFloat(ANIM_MOVE_SPEED, inputDirection.magnitude);
+        }
+        
+        public void Smack(InputAction.CallbackContext ctx)
+        {
+            if (!ctx.performed || !CanDoAction) return;
+            
+            animator.SetTrigger(ANIM_SMACK);
+            actionCooldownTimer = actionCooldowns.smack;
+        }
+
+        public void Block(InputAction.CallbackContext ctx)
+        {
+            if (!ctx.performed || !CanDoAction) return;
+            
+            animator.SetTrigger(ANIM_BLOCK);
+            actionCooldownTimer = actionCooldowns.block;
+        }
+        
+#endregion
+
+#region Smacking
+
+        private bool lastSmackHitPlayers = false;
+        
+        /// <remarks>Called from animation</remarks>
+        public void SmackStart()
+        {
+            lastSmackHitPlayers = attackHitbox.HasHeroes;
+            
+            if (attackHitbox.HasHeroes)
+            {
+                foreach (Hero otherHero in attackHitbox.Heroes)
+                {
+                    if (otherHero == this) continue;
+                    if (otherHero.BlocksAttackFromDirection(otherHero.transform.position - transform.position)) continue; // TODO: also stun attacker?
+
+                    int takenMoney = otherHero.TakeMoney(1); // TODO: flying cash
+                    Money += takenMoney;
+                    
+                    otherHero.KnockBack(otherHero.transform.position - transform.position);
+                }
+            }
+        }
+
+        /// <remarks>Called from animation</remarks>
+        public void SmackEnd()
+        {
+            if (!lastSmackHitPlayers) TakeMoney(1); // TODO: flying cash
+        }
+
+        public void KnockBack(Vector3 direction)
+        {
+            knockbackDirection = Vector3.ProjectOnPlane(direction, Vector3.up).normalized;
+            knockbackProgress = 0;
         }
 
 #endregion
 
-        public void CollectBag(Bag bag) => Money += bag.Value;
+#region Blocking
+
+        public bool BlocksAttackFromDirection(Vector3 attackDirection)
+        {
+            if (!Blocking) return false;
+            
+            Vector3 projectedDirection = -1 * Vector3.ProjectOnPlane(attackDirection, Vector3.up);
+            return Vector3.Angle(projectedDirection, Direction) < Params.blockAngle;
+        }
+
+        /// <remarks>Called from animation</remarks>
+        public void BlockStart()
+        {
+            Blocking = true;
+        }
+
+        /// <remarks>Called from animation</remarks>
+        public void BlockEnd()
+        {
+            Blocking = false;
+        }
+
+#endregion
+        
     }
 }
 

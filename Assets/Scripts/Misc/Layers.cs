@@ -31,5 +31,8 @@ namespace Moneybag.Misc
         
         private static int? ground;
         public static int Ground => ground ?? (ground = LayerMask.NameToLayer("Ground")).Value;
+
+        private static int? heroDetector;
+        public static int HeroDetector => heroDetector ?? (heroDetector = LayerMask.NameToLayer("HeroDetector")).Value;
     }
 }
