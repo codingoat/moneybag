@@ -22,6 +22,8 @@ namespace Moneybag
         }
         [SerializeField] private ActionCooldowns actionCooldowns;
 
+        [SerializeField] private MoneyStack moneyStackPrefab;
+        [SerializeField] private MoneyPickup moneyPickupPrefab;
         [SerializeField] private HeroDetector attackHitbox;
 
         private float actionCooldownTimer;
@@ -115,7 +117,7 @@ namespace Moneybag
             return returnedAmount;
         }
         
-        public void CollectBag(Bag bag) => Money += bag.Value;
+        public void CollectBag(MoneyPickup moneyPickup) => Money += moneyPickup.Value;
 
 #endregion
 
@@ -161,18 +163,28 @@ namespace Moneybag
                     if (otherHero == this) continue;
                     if (otherHero.BlocksAttackFromDirection(otherHero.transform.position - transform.position)) continue; // TODO: also stun attacker?
 
-                    int takenMoney = otherHero.TakeMoney(1); // TODO: flying cash
+                    int takenMoney = otherHero.TakeMoney(1);
                     Money += takenMoney;
-                    
+                    if (takenMoney > 0) Instantiate(moneyStackPrefab).Animate(otherHero.transform.position, transform);
+
                     otherHero.KnockBack(otherHero.transform.position - transform.position);
                 }
             }
         }
-
+        
+        private const float thrownMoneySpeed = 7;
         /// <remarks>Called from animation</remarks>
         public void SmackEnd()
         {
-            if (!lastSmackHitPlayers) TakeMoney(1); // TODO: flying cash
+            if (!lastSmackHitPlayers)
+            {
+                int lostMoney = TakeMoney(1);
+                if (lostMoney > 0)
+                {
+                    Instantiate(moneyPickupPrefab, transform.position - transform.forward / 2 + Vector3.up, Quaternion.identity)
+                        .Throw((transform.forward * -1 + Vector3.up / 2).normalized * thrownMoneySpeed);
+                }
+            }
         }
 
         public void KnockBack(Vector3 direction)
