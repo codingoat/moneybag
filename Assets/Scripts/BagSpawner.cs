@@ -1,7 +1,5 @@
-using System;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using ZUtils;
 using Random = UnityEngine.Random;
 
@@ -9,13 +7,16 @@ namespace Moneybag
 {
     public class BagSpawner : MonoBehaviour
     {
-        [FormerlySerializedAs("bagPrefab")] [SerializeField] private MoneyPickup moneyPickupPrefab;
-        [SerializeField] private float spawnDelay = 8;
+        [SerializeField] private MoneyPickup moneyPickupPrefab;
+        [SerializeField] private AnimationCurve spawnCurve;
         [SerializeField] private Transform spawnZonesParent;
         
         private Bounds[] spawnZones;
 
-        private float spawnTimer;
+        private int spawnedMoney = 0;
+
+        private int TargetSpawnedMoney => Mathf.RoundToInt(GameManager.Instance.HeroCount * Params.bagsToWin *
+                                                           Params.bagValue * Params.spawnedMoneyMultiplier);
 
         private void Awake()
         {
@@ -24,16 +25,28 @@ namespace Moneybag
 
         private void Update()
         {
-            spawnTimer += Time.deltaTime;
-            if (spawnTimer > spawnDelay)
+            int desiredMoney = Mathf.RoundToInt(spawnCurve.Evaluate(GameManager.Instance.GameProgress) * TargetSpawnedMoney);
+            
+            
+            while (spawnedMoney < desiredMoney)
             {
-                spawnTimer -= spawnDelay;
                 Vector3 randomPoint = spawnZones.PickRandom().Sample();
                 if (Physics.Raycast(randomPoint, Vector3.down, out RaycastHit hitInfo))
                 {
                     MoneyPickup moneyPickup = Instantiate(moneyPickupPrefab, hitInfo.point, Quaternion.Euler(0, Random.Range(0, 360), 0));
-                    moneyPickup.Value = Random.Range(1, 3);
+                    
+                    
+                    moneyPickup.Value = Mathf.Min(GetRandomValue(), desiredMoney - spawnedMoney);
+                    spawnedMoney += moneyPickup.Value;
                 }
+            }
+            
+            int GetRandomValue()
+            {
+                float rand = Random.value;
+                if (rand < 0.05f) return 3;
+                if (rand < .3) return 2;
+                return 1;
             }
         }
     }

@@ -68,6 +68,13 @@ namespace Moneybag
 
 #endregion
 
+#region Events
+
+        /// <summary>arg1: Target, arg2: Attacker</summary>
+        public event Action<Hero, Hero> Smacked; 
+
+#endregion
+
 #region Lifecycle
 
         private void Awake()
@@ -179,7 +186,7 @@ namespace Moneybag
         /// <remarks>Called from animation</remarks>
         public void SmackStart()
         {
-            if (!CanDoAction) return;
+            if (KnockedBack) return;
             
             lastSmackHitPlayers = attackHitbox.HasHeroes;
             bool lastSmackHitMeat = false, lastSmackHitBlock = false;
@@ -196,9 +203,10 @@ namespace Moneybag
                     }
 
                     int takenMoney = otherHero.TakeMoney(1);
-                    if (takenMoney > 0) Instantiate(moneyStackPrefab).Animate(otherHero.transform.position, transform);
+                    if (takenMoney > 0) Instantiate(moneyStackPrefab).Animate(otherHero.transform.position, transform, this);
 
                     otherHero.KnockBack(otherHero.transform.position - transform.position);
+                    Smacked?.Invoke(otherHero, this);
                     
                     lastSmackHitMeat = true;
                 }
