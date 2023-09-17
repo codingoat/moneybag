@@ -4811,11 +4811,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 288996788628391440, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 288996788628391440, guid: ab7a4ea026da4d94ba90ac585b173285,
-        type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -4837,11 +4832,6 @@ PrefabInstance:
     - target: {fileID: 771454376922992656, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 771454376922992656, guid: ab7a4ea026da4d94ba90ac585b173285,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 771454376922992656, guid: ab7a4ea026da4d94ba90ac585b173285,
@@ -4871,11 +4861,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2334109146138372084, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2334109146138372084, guid: ab7a4ea026da4d94ba90ac585b173285,
-        type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
@@ -4897,11 +4882,6 @@ PrefabInstance:
     - target: {fileID: 2960666592379706381, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2960666592379706381, guid: ab7a4ea026da4d94ba90ac585b173285,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2960666592379706381, guid: ab7a4ea026da4d94ba90ac585b173285,
@@ -5021,11 +5001,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6480081118533154492, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6480081118533154492, guid: ab7a4ea026da4d94ba90ac585b173285,
-        type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
@@ -5043,6 +5018,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HeroUI (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5460,11 +5460,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6480081118533154492, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6480081118533154492, guid: ab7a4ea026da4d94ba90ac585b173285,
-        type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
@@ -5482,6 +5477,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HeroUI (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189535208000013197, guid: ab7a4ea026da4d94ba90ac585b173285,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

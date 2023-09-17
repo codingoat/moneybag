@@ -31,8 +31,8 @@ namespace Moneybag
         [SerializeField] private AudioSource weaponAudio;
         [SerializeField] private AudioClip sfxSwing, sfxHit, sfxBlock, sfxClick, sfxMoneyPickup;
 
-        private float actionCooldownTimer;
-        private bool CanDoAction => actionCooldownTimer <= 0 && !KnockedBack;
+        public float ActionCooldownTimer { get; private set; }
+        private bool CanDoAction => ActionCooldownTimer <= 0 && !KnockedBack;
         public bool Blocking { get; private set; }
 
         [SerializeField] private float knockbackLength, knockbackStrength;
@@ -88,7 +88,7 @@ namespace Moneybag
                     Time.deltaTime * rotationSpeed);
             
             // timers
-            actionCooldownTimer = Mathf.Max(0, actionCooldownTimer - Time.deltaTime);
+            ActionCooldownTimer = Mathf.Max(0, ActionCooldownTimer - Time.deltaTime);
             if (KnockedBack) knockbackProgress = Mathf.Min(1, knockbackProgress + Time.deltaTime / knockbackLength);
         }
 
@@ -159,7 +159,7 @@ namespace Moneybag
             if (!ctx.performed || !CheckCanDoAction()) return;
             
             animator.SetTrigger(ANIM_SMACK);
-            actionCooldownTimer = actionCooldowns.smack;
+            ActionCooldownTimer = actionCooldowns.smack;
         }
 
         public void Block(InputAction.CallbackContext ctx)
@@ -167,7 +167,7 @@ namespace Moneybag
             if (!ctx.performed || !CheckCanDoAction()) return;
             
             animator.SetTrigger(ANIM_BLOCK);
-            actionCooldownTimer = actionCooldowns.block;
+            ActionCooldownTimer = actionCooldowns.block;
         }
         
 #endregion

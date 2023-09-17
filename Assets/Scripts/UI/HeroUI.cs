@@ -11,20 +11,23 @@ namespace Moneybag.UI
     {
         [SerializeField] private Transform bagsParent;
         [SerializeField] private BagIcon bagPrefab;
-        [SerializeField] private Image heroIcon;
-
+        [SerializeField] private Image heroIcon, cooldownBar;
+        
         private List<BagIcon> bags = new();
 
         private Hero hero;
         private HeroColor heroColor;
         public Hero Hero
         {
+            get => hero;
             set
             {
                 hero = value;
                 heroColor = value.GetComponent<HeroColor>();
             }
         }
+
+        private float maxCooldown = 0;
 
         private void Awake()
         {
@@ -35,7 +38,7 @@ namespace Moneybag.UI
         {
             if (!heroColor) return;
 
-            heroIcon.color = heroColor.Color;
+            cooldownBar.color = heroIcon.color = heroColor.Color;
             
             // update bag count
             int desiredBags = hero.Money / Params.bagValue + 1;
@@ -60,6 +63,21 @@ namespace Moneybag.UI
             
             // update bag progress
             bags[^1].Progress = (hero.Money % Params.bagValue) / (float)Params.bagValue;
+            
+            
+            // update cooldown bar
+            if (Hero.ActionCooldownTimer == 0) // bar full
+            {
+                maxCooldown = 0;
+                cooldownBar.fillAmount = 1;
+                cooldownBar.SetAlpha(1);
+            }
+            else
+            {
+                if (Hero.ActionCooldownTimer > maxCooldown) maxCooldown = hero.ActionCooldownTimer;
+                cooldownBar.fillAmount = Easing.OutSine(1 - Hero.ActionCooldownTimer / maxCooldown);
+                cooldownBar.SetAlpha(.2f);
+            }
         }
     }
 }
