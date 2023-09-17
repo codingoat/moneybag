@@ -26,6 +26,8 @@ namespace Moneybag
         [SerializeField] private MoneyPickup moneyPickupPrefab;
         [SerializeField] private HeroDetector attackHitbox;
 
+        [SerializeField] private ParticleSystem weaponGlow, weaponTrail;
+
         private float actionCooldownTimer;
         private bool CanDoAction => actionCooldownTimer <= 0 && !KnockedBack;
         public bool Blocking { get; private set; }
@@ -69,6 +71,9 @@ namespace Moneybag
         {
             rg = GetComponent<Rigidbody>();
             animator = GetComponent<Animator>();
+            
+            weaponGlow.Stop();
+            weaponTrail.Stop();
         }
 
         private void Update()
@@ -170,6 +175,8 @@ namespace Moneybag
                     otherHero.KnockBack(otherHero.transform.position - transform.position);
                 }
             }
+            
+            weaponTrail.Play();
         }
         
         private const float thrownMoneySpeed = 7;
@@ -185,6 +192,8 @@ namespace Moneybag
                         .Throw((transform.forward * -1 + Vector3.up / 2).normalized * thrownMoneySpeed);
                 }
             }
+            
+            weaponTrail.Stop();
         }
 
         public void KnockBack(Vector3 direction)
@@ -209,12 +218,14 @@ namespace Moneybag
         public void BlockStart()
         {
             Blocking = true;
+            weaponGlow.Play();
         }
 
         /// <remarks>Called from animation</remarks>
         public void BlockEnd()
         {
             Blocking = false;
+            weaponGlow.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         }
 
 #endregion
