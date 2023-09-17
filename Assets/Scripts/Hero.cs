@@ -27,6 +27,9 @@ namespace Moneybag
         [SerializeField] private HeroDetector attackHitbox;
 
         [SerializeField] private ParticleSystem weaponGlow, weaponTrail;
+        
+        [SerializeField] private AudioSource weaponAudio;
+        [SerializeField] private AudioClip sfxSwing, sfxHit, sfxBlock, sfxClick, sfxMoneyPickup;
 
         private float actionCooldownTimer;
         private bool CanDoAction => actionCooldownTimer <= 0 && !KnockedBack;
@@ -121,8 +124,14 @@ namespace Moneybag
             Money -= returnedAmount;
             return returnedAmount;
         }
+
+        public void AddMoney(int amount)
+        {
+            Money += amount;
+            weaponAudio.PlayOneShot(sfxMoneyPickup);
+        }
         
-        public void CollectBag(MoneyPickup moneyPickup) => Money += moneyPickup.Value;
+        public void CollectBag(MoneyPickup moneyPickup) => AddMoney(moneyPickup.Value);
 
 #endregion
 
@@ -133,10 +142,21 @@ namespace Moneybag
             inputDirection = ctx.ReadValue<Vector2>();
             animator.SetFloat(ANIM_MOVE_SPEED, inputDirection.magnitude);
         }
+
+        private bool CheckCanDoAction()
+        {
+            if(!CanDoAction)
+            {
+                weaponAudio.PlayOneShot(sfxClick);
+                return false;
+            }
+
+            return true;
+        }
         
         public void Smack(InputAction.CallbackContext ctx)
         {
-            if (!ctx.performed || !CanDoAction) return;
+            if (!ctx.performed || !CheckCanDoAction()) return;
             
             animator.SetTrigger(ANIM_SMACK);
             actionCooldownTimer = actionCooldowns.smack;
@@ -144,7 +164,7 @@ namespace Moneybag
 
         public void Block(InputAction.CallbackContext ctx)
         {
-            if (!ctx.performed || !CanDoAction) return;
+            if (!ctx.performed || !CheckCanDoAction()) return;
             
             animator.SetTrigger(ANIM_BLOCK);
             actionCooldownTimer = actionCooldowns.block;
@@ -159,24 +179,35 @@ namespace Moneybag
         /// <remarks>Called from animation</remarks>
         public void SmackStart()
         {
+            if (!CanDoAction) return;
+            
             lastSmackHitPlayers = attackHitbox.HasHeroes;
+            bool lastSmackHitMeat = false, lastSmackHitBlock = false;
             
             if (attackHitbox.HasHeroes)
             {
                 foreach (Hero otherHero in attackHitbox.Heroes)
                 {
                     if (otherHero == this) continue;
-                    if (otherHero.BlocksAttackFromDirection(otherHero.transform.position - transform.position)) continue; // TODO: also stun attacker?
+                    if (otherHero.IsBlockingFromDirection(otherHero.transform.position - transform.position))
+                    {
+                        lastSmackHitBlock = true;
+                        continue; // TODO: also stun attacker?
+                    }
 
                     int takenMoney = otherHero.TakeMoney(1);
-                    Money += takenMoney;
                     if (takenMoney > 0) Instantiate(moneyStackPrefab).Animate(otherHero.transform.position, transform);
 
                     otherHero.KnockBack(otherHero.transform.position - transform.position);
+                    
+                    lastSmackHitMeat = true;
                 }
             }
             
             weaponTrail.Play();
+            weaponAudio.PlayOneShot(sfxSwing);
+            if (lastSmackHitMeat) weaponAudio.PlayOneShot(sfxHit);
+            if (lastSmackHitBlock) weaponAudio.PlayOneShot(sfxBlock);
         }
         
         private const float thrownMoneySpeed = 7;
@@ -206,7 +237,7 @@ namespace Moneybag
 
 #region Blocking
 
-        public bool BlocksAttackFromDirection(Vector3 attackDirection)
+        public bool IsBlockingFromDirection(Vector3 attackDirection)
         {
             if (!Blocking) return false;
             
@@ -219,6 +250,7 @@ namespace Moneybag
         {
             Blocking = true;
             weaponGlow.Play();
+            weaponAudio.PlayOneShot(sfxSwing);
         }
 
         /// <remarks>Called from animation</remarks>

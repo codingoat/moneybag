@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using ZUtils;
@@ -15,15 +16,18 @@ namespace Moneybag
 
         private bool animating = false;
 
-        public void Animate(Vector3 startPosition, Transform target)
+        public void Animate(Vector3 startPosition, Transform target, Hero receiver = null)
         {
             if (animating) return;
             
             animating = true;
-            StartCoroutine(AnimateInternal(startPosition, target));
+            StartCoroutine(AnimateInternal(startPosition, target, () =>
+            {
+                if (receiver) receiver.AddMoney(1);
+            }));
         } 
 
-        private IEnumerator AnimateInternal(Vector3 startPosition, Transform target)
+        private IEnumerator AnimateInternal(Vector3 startPosition, Transform target, Action callback = null)
         {
             float startTime = Time.time;
             Vector3 floatPosition = startPosition + Vector3.up * floatHeight;
@@ -42,6 +46,7 @@ namespace Moneybag
                 yield return null;
             }
             
+            callback?.Invoke();
             Destroy(gameObject);
             
 
