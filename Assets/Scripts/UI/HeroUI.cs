@@ -75,7 +75,7 @@ namespace Moneybag.UI
             else
             {
                 if (Hero.ActionCooldownTimer > maxCooldown) maxCooldown = hero.ActionCooldownTimer;
-                cooldownBar.fillAmount = Easing.OutSine(1 - Hero.ActionCooldownTimer / maxCooldown);
+                cooldownBar.fillAmount = Easing.InSine(1 - Hero.ActionCooldownTimer / maxCooldown);
                 cooldownBar.SetAlpha(.2f);
             }
         }

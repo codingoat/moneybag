@@ -29,7 +29,7 @@ namespace Moneybag
         [SerializeField] private ParticleSystem weaponGlow, weaponTrail;
         
         [SerializeField] private AudioSource weaponAudio;
-        [SerializeField] private AudioClip sfxSwing, sfxHit, sfxBlock, sfxClick, sfxMoneyPickup;
+        [SerializeField] private AudioClip sfxSwing, sfxHit, sfxBlock, sfxClick, sfxMoneyPickup, sfxSwingWeak;
 
         public float ActionCooldownTimer { get; private set; }
         private bool CanDoAction => ActionCooldownTimer <= 0 && !KnockedBack;
@@ -167,6 +167,7 @@ namespace Moneybag
             
             animator.SetTrigger(ANIM_SMACK);
             ActionCooldownTimer = actionCooldowns.smack;
+            weaponAudio.PlayOneShot(sfxSwingWeak);
         }
 
         public void Block(InputAction.CallbackContext ctx)
