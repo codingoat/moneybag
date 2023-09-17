@@ -10645,7 +10645,7 @@ MonoBehaviour:
     throwPerform: 0.5
   moneyStackPrefab: {fileID: 970080477487966596, guid: d375f98306629e644861d0831a25e725,
     type: 3}
-  moneyPickupPrefab: {fileID: 2043227590353448667, guid: daa0d1da2cdb9a34484c63803dbe07f7,
+  moneyPickupPrefab: {fileID: 5625328981985991298, guid: 94f5318e1f4d4154c98e481af968509d,
     type: 3}
   attackHitbox: {fileID: 4355182476118003973}
   weaponGlow: {fileID: 2760709302323020597}
