@@ -18,7 +18,7 @@ namespace Moneybag
         [Serializable]
         public class ActionCooldowns
         {
-            public float smack = 1.5f, block = .8f;
+            public float smack = 1.5f, block = .8f, throwCharge = .75f, throwCancel = .5f, throwPerform = .5f;
         }
         [SerializeField] private ActionCooldowns actionCooldowns;
 
@@ -32,8 +32,12 @@ namespace Moneybag
         [SerializeField] private AudioClip sfxSwing, sfxHit, sfxBlock, sfxClick, sfxMoneyPickup, sfxSwingWeak;
 
         public float ActionCooldownTimer { get; private set; }
-        private bool CanDoAction => ActionCooldownTimer <= 0 && !KnockedBack;
+        private bool CanDoAction => ActionCooldownTimer <= 0 && !KnockedBack && !ChargingThrow;
         public bool Blocking { get; private set; }
+        
+        public bool ChargingThrow { get; private set; }
+        private float throwChargeTimer;
+        public float ThrowChargeProgress => throwChargeTimer / actionCooldowns.throwCharge;
 
         [SerializeField] private float knockbackLength, knockbackStrength;
         private float knockbackProgress;
@@ -45,7 +49,9 @@ namespace Moneybag
 
         private readonly int ANIM_MOVE_SPEED = Animator.StringToHash("MoveSpeed"),
             ANIM_SMACK = Animator.StringToHash("Smack"),
-            ANIM_BLOCK = Animator.StringToHash("Block");
+            ANIM_BLOCK = Animator.StringToHash("Block"),
+            ANIM_THROW = Animator.StringToHash("Throw"),
+            ANIM_THROW_PERFORM = Animator.StringToHash("ThrowPerform");
 
 #region Properties
 
@@ -97,6 +103,7 @@ namespace Moneybag
             // timers
             ActionCooldownTimer = Mathf.Max(0, ActionCooldownTimer - Time.deltaTime);
             if (KnockedBack) knockbackProgress = Mathf.Min(1, knockbackProgress + Time.deltaTime / knockbackLength);
+            if (ChargingThrow) throwChargeTimer = Mathf.Min(1, throwChargeTimer + Time.deltaTime);
         }
 
         // since the character is driven by a rigidbody,
@@ -176,6 +183,40 @@ namespace Moneybag
             
             animator.SetTrigger(ANIM_BLOCK);
             ActionCooldownTimer = actionCooldowns.block;
+        }
+
+        public void Throw(InputAction.CallbackContext ctx)
+        {
+            if (ctx.started) // start charging
+            {
+                if (!CheckCanDoAction()) return;
+                
+                ChargingThrow = true;
+                throwChargeTimer = 0;
+                animator.SetBool(ANIM_THROW, true);
+                weaponAudio.PlayOneShot(sfxSwingWeak);
+            }
+            else if (ctx.canceled) // perform if we can
+            { 
+                if (!ChargingThrow) return;
+                
+                if (ThrowChargeProgress >= 1) // perform
+                {
+                    animator.SetTrigger(ANIM_THROW_PERFORM);
+                    animator.Update(0);
+                    // TODO: instantiate thrown bag
+                    weaponAudio.PlayOneShot(sfxSwing);
+                    ActionCooldownTimer = actionCooldowns.throwPerform;
+                }
+                else // cancel
+                {
+                    weaponAudio.PlayOneShot(sfxSwingWeak);
+                    ActionCooldownTimer = actionCooldowns.throwCancel;
+                }
+
+                ChargingThrow = false;
+                animator.SetBool(ANIM_THROW, false);
+            }
         }
         
 #endregion
