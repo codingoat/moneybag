@@ -42,7 +42,7 @@ namespace Moneybag
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.layer != Layers.Hero) return;
+            if (!Collectable || other.gameObject.layer != Layers.Hero) return;
 
             other.GetComponent<Hero>().CollectBag(this);
             Destroy(gameObject);

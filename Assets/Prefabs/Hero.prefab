@@ -5267,6 +5267,37 @@ Transform:
   - {fileID: 7999118068284521464}
   m_Father: {fileID: 4492371502039825050}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2608006692338822888
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5770583319166775485}
+  m_Layer: 0
+  m_Name: Throw Bag Spawn Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 7148428337604731935, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5770583319166775485
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2608006692338822888}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.042657375, y: 0.797, z: 1.6553569}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4492371502039825050}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4160196659734412782
 GameObject:
   m_ObjectHideFlags: 0
@@ -10498,6 +10529,7 @@ Transform:
   - {fileID: 4922259330014117267}
   - {fileID: 2800528206624918980}
   - {fileID: 1107268642871904143}
+  - {fileID: 5770583319166775485}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1570879207837676888
@@ -10647,7 +10679,10 @@ MonoBehaviour:
     type: 3}
   moneyPickupPrefab: {fileID: 5625328981985991298, guid: 94f5318e1f4d4154c98e481af968509d,
     type: 3}
+  thrownBagPrefab: {fileID: 923901811833664043, guid: 9bd3469f3d8b34d49a1ff5c4f9e2fe10,
+    type: 3}
   attackHitbox: {fileID: 4355182476118003973}
+  thrownBagSpawnPoint: {fileID: 5770583319166775485}
   weaponGlow: {fileID: 2760709302323020597}
   weaponTrail: {fileID: 1154023761869531417}
   weaponAudio: {fileID: 1901581011632471319}

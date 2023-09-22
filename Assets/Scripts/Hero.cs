@@ -22,12 +22,17 @@ namespace Moneybag
         }
         [SerializeField] private ActionCooldowns actionCooldowns;
 
+        [Space]
         [SerializeField] private MoneyStack moneyStackPrefab;
         [SerializeField] private MoneyPickup moneyPickupPrefab;
+        [SerializeField] private ThrownBag thrownBagPrefab;
+        
+        [Space]
         [SerializeField] private HeroDetector attackHitbox;
-
+        [SerializeField] private Transform thrownBagSpawnPoint;
         [SerializeField] private ParticleSystem weaponGlow, weaponTrail;
         
+        [Space]
         [SerializeField] private AudioSource weaponAudio;
         [SerializeField] private AudioClip sfxSwing, sfxHit, sfxBlock, sfxClick, sfxMoneyPickup, sfxSwingWeak;
 
@@ -187,40 +192,19 @@ namespace Moneybag
 
         public void Throw(InputAction.CallbackContext ctx)
         {
-            if (ctx.started) // start charging
-            {
-                if (!CheckCanDoAction()) return;
-                
-                ChargingThrow = true;
-                throwChargeTimer = 0;
-                animator.SetBool(ANIM_THROW, true);
-                weaponAudio.PlayOneShot(sfxSwingWeak);
-            }
-            else if (ctx.canceled) // perform if we can
-            { 
-                if (!ChargingThrow) return;
-                
-                if (ThrowChargeProgress >= 1) // perform
-                {
-                    animator.SetTrigger(ANIM_THROW_PERFORM);
-                    animator.Update(0);
-                    // TODO: instantiate thrown bag
-                    weaponAudio.PlayOneShot(sfxSwing);
-                    ActionCooldownTimer = actionCooldowns.throwPerform;
-                }
-                else // cancel
-                {
-                    weaponAudio.PlayOneShot(sfxSwingWeak);
-                    ActionCooldownTimer = actionCooldowns.throwCancel;
-                }
-
-                ChargingThrow = false;
-                animator.SetBool(ANIM_THROW, false);
-            }
+            // these functions perform CheckCanDoAction() themselves 
+            if (ctx.started) ChargeThrow();
+            else if (ctx.canceled) PerformThrow();
         }
-        
+
 #endregion
 
+        public void KnockBack(Vector3 direction)
+        {
+            knockbackDirection = Vector3.ProjectOnPlane(direction, Vector3.up).normalized;
+            knockbackProgress = 0;
+        }
+        
 #region Smacking
 
         private bool lastSmackHitPlayers = false;
@@ -269,18 +253,12 @@ namespace Moneybag
                 int lostMoney = TakeMoney(1);
                 if (lostMoney > 0)
                 {
-                    Instantiate(moneyPickupPrefab, transform.position - transform.forward / 2 + Vector3.up, Quaternion.identity)
+                    Instantiate(moneyPickupPrefab, transform.position - transform.forward * .5f + Vector3.up, Quaternion.identity)
                         .Throw((transform.forward * -1 + Vector3.up / 2).normalized * thrownMoneySpeed);
                 }
             }
             
             weaponTrail.Stop();
-        }
-
-        public void KnockBack(Vector3 direction)
-        {
-            knockbackDirection = Vector3.ProjectOnPlane(direction, Vector3.up).normalized;
-            knockbackProgress = 0;
         }
 
 #endregion
@@ -311,6 +289,50 @@ namespace Moneybag
         }
 
 #endregion
+
+#region Throwing
+
+        private void ChargeThrow()
+        {
+            if (!CheckCanDoAction()) return;
+            if (Bags == 0)
+            {
+                weaponAudio.PlayOneShot(sfxClick);
+                return;
+            }
+
+            ChargingThrow = true;
+            throwChargeTimer = 0;
+            animator.SetBool(ANIM_THROW, true);
+            weaponAudio.PlayOneShot(sfxSwingWeak);
+        }
+
+        private void PerformThrow()
+        {
+            if (!ChargingThrow) return;
+
+            if (ThrowChargeProgress >= 1) // perform
+            {
+                animator.SetTrigger(ANIM_THROW_PERFORM);
+                animator.Update(0);
+                Instantiate(thrownBagPrefab, thrownBagSpawnPoint.position, thrownBagSpawnPoint.rotation)
+                    .Throw(this, transform.forward);
+                weaponAudio.PlayOneShot(sfxSwing);
+                ActionCooldownTimer = actionCooldowns.throwPerform;
+                Money -= Params.bagValue;
+            }
+            else // cancel
+            {
+                weaponAudio.PlayOneShot(sfxSwingWeak);
+                ActionCooldownTimer = actionCooldowns.throwCancel;
+            }
+
+            ChargingThrow = false;
+            animator.SetBool(ANIM_THROW, false);
+        }
+        
+#endregion
+        
         
     }
 }
