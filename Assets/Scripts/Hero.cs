@@ -48,6 +48,8 @@ namespace Moneybag
         private float knockbackProgress;
         private Vector3 knockbackDirection;
         private bool KnockedBack => knockbackProgress < 1;
+
+        private float ActionSpeedMult => 1 / Mathf.Pow(Params.bagSlowdownExpBase, Bags);
         
         private Rigidbody rg;
         private Animator animator;
@@ -56,7 +58,8 @@ namespace Moneybag
             ANIM_SMACK = Animator.StringToHash("Smack"),
             ANIM_BLOCK = Animator.StringToHash("Block"),
             ANIM_THROW = Animator.StringToHash("Throw"),
-            ANIM_THROW_PERFORM = Animator.StringToHash("ThrowPerform");
+            ANIM_THROW_PERFORM = Animator.StringToHash("ThrowPerform"),
+            ANIM_ANIM_SPEED = Animator.StringToHash("AnimationSpeed");
 
 #region Properties
 
@@ -103,12 +106,14 @@ namespace Moneybag
             
             if (moveDirection.sqrMagnitude > 0.05f) // rotate hero smoothly
                 rg.rotation = Quaternion.Slerp(rg.rotation, Quaternion.LookRotation(moveDirection),
-                    Time.deltaTime * rotationSpeed);
+                    Time.deltaTime * ActionSpeedMult * rotationSpeed);
             
             // timers
-            ActionCooldownTimer = Mathf.Max(0, ActionCooldownTimer - Time.deltaTime);
+            ActionCooldownTimer = Mathf.Max(0, ActionCooldownTimer - Time.deltaTime * ActionSpeedMult);
             if (KnockedBack) knockbackProgress = Mathf.Min(1, knockbackProgress + Time.deltaTime / knockbackLength);
-            if (ChargingThrow) throwChargeTimer = Mathf.Min(1, throwChargeTimer + Time.deltaTime);
+            if (ChargingThrow) throwChargeTimer = Mathf.Min(1, throwChargeTimer + Time.deltaTime * ActionSpeedMult);
+            
+            animator.SetFloat(ANIM_ANIM_SPEED, ActionSpeedMult);
         }
 
         // since the character is driven by a rigidbody,
@@ -119,7 +124,7 @@ namespace Moneybag
             Vector3 velocity;
 
             if (KnockedBack) velocity = Easing.OutQuad(1 - knockbackProgress) * knockbackStrength * knockbackDirection; 
-            else velocity = MoveDirection * moveSpeed;
+            else velocity = moveSpeed * ActionSpeedMult * MoveDirection;
             
             velocity += rg.velocity.y * Vector3.up; // apply gravity from rg
             
