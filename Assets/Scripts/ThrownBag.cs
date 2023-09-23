@@ -10,8 +10,7 @@ namespace Moneybag
         [SerializeField] private AudioClip sfxBlock;
         
         [Space]
-        [SerializeField] private MoneyStack moneyStackPrefab; // TODO: centralize
-        [SerializeField] private MoneyPickup moneyPickupPrefab;
+        [SerializeField] private MoneyPickup moneyPickupPrefab; // TODO: centralize to ItemSpawner
         
         private Rigidbody rg;
 
@@ -43,8 +42,7 @@ namespace Moneybag
                 else
                 {
                     int taken = hero.TakeMoney(Params.bagValue);
-                    for (int i = 0; i < taken + Params.bagValue; i++)
-                        Instantiate(moneyStackPrefab).Animate(hero.transform.position, owner.transform, owner);
+                    ItemSpawner.Instance.SpawnStacks(hero, owner, taken + Params.bagValue);
                     hero.KnockBack(transform.forward);
                 }
                 

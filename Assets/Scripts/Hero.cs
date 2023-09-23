@@ -23,7 +23,7 @@ namespace Moneybag
         [SerializeField] private ActionCooldowns actionCooldowns;
 
         [Space]
-        [SerializeField] private MoneyStack moneyStackPrefab;
+        // [SerializeField] private MoneyStack moneyStackPrefab;
         [SerializeField] private MoneyPickup moneyPickupPrefab;
         [SerializeField] private ThrownBag thrownBagPrefab;
         
@@ -229,7 +229,8 @@ namespace Moneybag
                     }
 
                     int takenMoney = otherHero.TakeMoney(1);
-                    if (takenMoney > 0) Instantiate(moneyStackPrefab).Animate(otherHero.transform.position, transform, this);
+                    if (takenMoney > 0) ItemSpawner.Instance.SpawnStacks(otherHero, this);
+                        // Instantiate(moneyStackPrefab).Animate(otherHero.transform.position, transform, this);
 
                     otherHero.KnockBack(otherHero.transform.position - transform.position);
                     Smacked?.Invoke(otherHero, this);

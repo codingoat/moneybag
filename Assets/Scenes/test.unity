@@ -2629,6 +2629,7 @@ GameObject:
   - component: {fileID: 920591227}
   - component: {fileID: 920591228}
   - component: {fileID: 920591229}
+  - component: {fileID: 920591230}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -2774,6 +2775,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1187ca3015bd4e2fac76736556bc6c1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &920591230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920591224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c4d2ed9d3f4e968154e8da2afa2c90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stackSpawnStagger: 0.1
+  moneyStackPrefab: {fileID: 970080477487966596, guid: d375f98306629e644861d0831a25e725,
+    type: 3}
 --- !u!1 &949476722
 GameObject:
   m_ObjectHideFlags: 0
@@ -5172,7 +5188,7 @@ PrefabInstance:
     - target: {fileID: 288996788628391440, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 288996788628391440, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
@@ -5202,7 +5218,7 @@ PrefabInstance:
     - target: {fileID: 771454376922992656, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 771454376922992656, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
@@ -5232,7 +5248,7 @@ PrefabInstance:
     - target: {fileID: 2334109146138372084, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2334109146138372084, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
@@ -5262,7 +5278,7 @@ PrefabInstance:
     - target: {fileID: 2960666592379706381, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2960666592379706381, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
@@ -5765,7 +5781,7 @@ PrefabInstance:
     - target: {fileID: 288996788628391440, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 288996788628391440, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
@@ -5795,7 +5811,7 @@ PrefabInstance:
     - target: {fileID: 771454376922992656, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 771454376922992656, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
@@ -5825,7 +5841,7 @@ PrefabInstance:
     - target: {fileID: 2334109146138372084, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2334109146138372084, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
@@ -5855,7 +5871,7 @@ PrefabInstance:
     - target: {fileID: 2960666592379706381, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2960666592379706381, guid: ab7a4ea026da4d94ba90ac585b173285,
         type: 3}
